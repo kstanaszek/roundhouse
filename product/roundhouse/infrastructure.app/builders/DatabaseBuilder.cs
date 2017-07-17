@@ -39,7 +39,10 @@ namespace roundhouse.infrastructure.app.builders
             database_to_migrate.configuration = configuration_property_holder;
             database_to_migrate.server_name = configuration_property_holder.ServerName ?? string.Empty;
             database_to_migrate.database_name = configuration_property_holder.DatabaseName ?? string.Empty;
+            database_to_migrate.roundhouse_server_name = configuration_property_holder.RoundhouseServerName ?? string.Empty;
+            database_to_migrate.roundhouse_database_name = configuration_property_holder.RoundhouseDatabaseName ?? string.Empty;
             database_to_migrate.connection_string = configuration_property_holder.ConnectionString;
+            database_to_migrate.roundhouse_connection_string = configuration_property_holder.ConnectionStringRoundhouse;
             database_to_migrate.admin_connection_string = configuration_property_holder.ConnectionStringAdmin;
             database_to_migrate.roundhouse_schema_name = configuration_property_holder.SchemaName;
             database_to_migrate.version_table_name = configuration_property_holder.VersionTableName;

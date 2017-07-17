@@ -35,6 +35,7 @@ namespace roundhouse.infrastructure
         public static readonly string default_server_name = "(local)";
         public static readonly string default_output_path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "ChuckNorris"), name);
         public static readonly string default_database_type = "roundhouse.databases.sqlserver.SqlServerDatabase, roundhouse.databases.sqlserver";
+        public static readonly string default_roundhouse_database_type = "roundhouse.databases.sqlserver.SqlServerDatabase, roundhouse.databases.sqlserver.roundhousedb";
         public static readonly string logging_file = @"C:\Temp\RoundhousE\roundhouse.changes.log";
         public static readonly string log4net_configuration_assembly = @"roundhouse";
         public static readonly string log4net_configuration_resource = @"roundhouse.infrastructure.app.logging.log4net.config.xml";
@@ -74,6 +75,7 @@ namespace roundhouse.infrastructure
             public static string scripts_run_table_name = default_scripts_run_table_name;
             public static string scripts_run_errors_table_name = default_scripts_run_errors_table_name;
             public static string database_type = default_database_type;
+            public static string roundhouse_database_type = default_roundhouse_database_type;
         }
     }
 }

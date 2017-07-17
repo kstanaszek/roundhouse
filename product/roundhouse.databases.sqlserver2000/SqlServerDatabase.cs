@@ -68,6 +68,8 @@ namespace roundhouse.databases.sqlserver2000
             }
             configuration_property_holder.ConnectionStringAdmin = admin_connection_string;
 
+            configuration_property_holder.ConnectionStringRoundhouse = roundhouse_connection_string;
+
             //set_repository(configuration_property_holder);
         }
 
@@ -91,7 +93,7 @@ namespace roundhouse.databases.sqlserver2000
             //run_sql(set_recovery_mode_script(simple)
         }
 
-        public override string create_database_script()
+        public override string create_database_script(string db_name)
         {
             return string.Format(
                 @"
@@ -105,7 +107,7 @@ namespace roundhouse.databases.sqlserver2000
 
                         SELECT @Created 
                         ",
-                database_name);
+                db_name);
         }
 
         public override string set_recovery_mode_script(bool simple)
@@ -144,7 +146,7 @@ namespace roundhouse.databases.sqlserver2000
                 );
         }
 
-        public override string delete_database_script()
+        public override string delete_database_script(string db_name)
         {
             return string.Format(
                 @"USE master 
@@ -153,7 +155,7 @@ namespace roundhouse.databases.sqlserver2000
                             ALTER DATABASE [{0}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE                            
                             DROP DATABASE [{0}] 
                         END",
-                database_name);
+                db_name);
         }
     }
 }

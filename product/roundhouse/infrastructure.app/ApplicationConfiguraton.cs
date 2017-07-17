@@ -193,8 +193,12 @@ namespace roundhouse.infrastructure.app
             Database database = ObjectFactory.GetInstance<Database>();
             database.initialize_connections(configuration_property_holder);
             configuration_property_holder.ServerName = database.server_name;
+            configuration_property_holder.RoundhouseServerName = database.roundhouse_server_name;
             configuration_property_holder.DatabaseName = database.database_name;
+            configuration_property_holder.RoundhouseDatabaseName = database.roundhouse_database_name;
             configuration_property_holder.ConnectionString = database.connection_string;
+            configuration_property_holder.ConnectionStringRoundhouse = database.roundhouse_connection_string;
+
 
             return new StructureMapContainer(ObjectFactory.Container);
         }

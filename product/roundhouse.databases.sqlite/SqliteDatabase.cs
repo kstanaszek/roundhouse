@@ -78,10 +78,10 @@
             return string.Format("Data Source={0};Version=3;New=True;", database_name);
         }
 
-        public override bool create_database_if_it_doesnt_exist(string custom_create_database_script)
+        public override bool create_database_if_it_doesnt_exist(string custom_create_database_script, string db_name)
         {
             if (!string.IsNullOrEmpty(custom_create_database_script)) throw new ApplicationException("You cannot specify a custom create database script with SQLite.");
-            string db_file = create_database_script();
+            string db_file = create_database_script(db_name);
 
             //in memory, so we are creating
             if (string.IsNullOrEmpty(db_file)) return true;
@@ -92,15 +92,15 @@
             return true;
         }
 
-        public override string create_database_script()
+        public override string create_database_script(string db_name)
         {
             if (database_name.to_lower() != ":memory:") return database_name;
             return string.Empty;
         }
 
-        public override void delete_database_if_it_exists()
+        public override void delete_database_if_it_exists(string db_name)
         {
-            string db_file = delete_database_script();
+            string db_file = delete_database_script(db_name);
             if (string.IsNullOrEmpty(db_file)) return;
 
             close_admin_connection();
@@ -109,9 +109,9 @@
             if (File.Exists(db_file)) File.Delete(db_file);
         }
 
-        public override string delete_database_script()
+        public override string delete_database_script(string db_name)
         {
-            if (database_name.to_lower() != ":memory:") return database_name;
+            if (database_name.to_lower() != ":memory:") return db_name;
             return string.Empty;
         }
 

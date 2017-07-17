@@ -24,7 +24,9 @@ namespace roundhouse.infrastructure.persistence
             configuration_holder = config;
             func_dictionary = new Dictionary<string, Func<IPersistenceConfigurer>>();
             func_dictionary.Add("roundhouse.databases.sqlserver.SqlServerDatabase, roundhouse.databases.sqlserver",
-                                () => MsSqlConfiguration.MsSql2005.ConnectionString(configuration_holder.ConnectionString));
+                                () => MsSqlConfiguration.MsSql2005.ConnectionString(configuration_holder.ConnectionStringRoundhouse));
+            func_dictionary.Add("roundhouse.databases.sqlserver.SqlServerDatabase, roundhouse.databases.sqlserver.roundhousedb",
+                                 () => MsSqlConfiguration.MsSql2005.ConnectionString(configuration_holder.ConnectionStringRoundhouse));
             func_dictionary.Add("roundhouse.databases.sqlserver2000.SqlServerDatabase, roundhouse.databases.sqlserver2000",
                                 () => MsSqlConfiguration.MsSql2000.ConnectionString(configuration_holder.ConnectionString));
             func_dictionary.Add("roundhouse.databases.mysql.MySqlDatabase, roundhouse.databases.mysql",
@@ -40,7 +42,9 @@ namespace roundhouse.infrastructure.persistence
             // merged
             string merged_assembly_name = ApplicationParameters.get_merged_assembly_name();
             func_dictionary.Add("roundhouse.databases.sqlserver.SqlServerDatabase, " + merged_assembly_name,
-                                () => MsSqlConfiguration.MsSql2005.ConnectionString(configuration_holder.ConnectionString));
+                                () => MsSqlConfiguration.MsSql2005.ConnectionString(configuration_holder.ConnectionStringRoundhouse));
+            func_dictionary.Add("roundhouse.databases.sqlserver.SqlServerDatabase.RoundhouseDb, " + merged_assembly_name,
+                                () => MsSqlConfiguration.MsSql2005.ConnectionString(configuration_holder.ConnectionStringRoundhouse));
             func_dictionary.Add("roundhouse.databases.sqlserver2000.SqlServerDatabase, " + merged_assembly_name,
                                 () => MsSqlConfiguration.MsSql2000.ConnectionString(configuration_holder.ConnectionString));
             func_dictionary.Add("roundhouse.databases.mysql.MySqlDatabase, " + merged_assembly_name,
@@ -68,7 +72,8 @@ namespace roundhouse.infrastructure.persistence
 
             try
             {
-                string key = configuration_holder.DatabaseType.Substring(0, configuration_holder.DatabaseType.IndexOf(',')) + ", " +
+
+                string key = configuration_holder.DatabaseType.Substring(0, configuration_holder.DatabaseType.IndexOf(',')) + ".RoundhouseDb, " +
                              ApplicationParameters.get_merged_assembly_name();
                 return build_session_factory(func_dictionary[key](), Assembly.GetExecutingAssembly(),top_namespace, additional_function);
                 //return build_session_factory(func_dictionary[key](), DefaultAssemblyLoader.load_assembly(ApplicationParameters.get_merged_assembly_name()),
@@ -78,7 +83,10 @@ namespace roundhouse.infrastructure.persistence
             {
                 // Changed from warning to debug. I may not be using session factory and this warning just adds noise.
                 Log.bound_to(this).log_a_debug_event_containing("Had an error building session factory from merged, attempting unmerged. The error:{0}{1}",System.Environment.NewLine,ex.ToString());
-                return build_session_factory(func_dictionary[configuration_holder.DatabaseType](), DefaultAssemblyLoader.load_assembly(assembly_name),
+
+                var x = func_dictionary[configuration_holder.DatabaseType + ".roundhousedb"]();
+
+                return build_session_factory(x, DefaultAssemblyLoader.load_assembly(assembly_name),
                                              top_namespace, additional_function);
             }
         }

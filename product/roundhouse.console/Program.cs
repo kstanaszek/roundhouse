@@ -23,7 +23,7 @@ namespace roundhouse.console
     {
         private static readonly ILog the_logger = LogManager.GetLogger(typeof(Program));
 
-        private static void Main(string[] args)
+    private static void Main(string[] args)
         {
             Log4NetAppender.configure();
 
@@ -104,6 +104,10 @@ namespace roundhouse.console
                      string.Format(
                          "REQUIRED: ConnectionString - As an alternative to ServerName and Database - You can provide an entire connection string instead."),
                      option => configuration.ConnectionString = option)
+                 .Add("cR=|csR=|connstringR=|connectionstringR=",
+                        string.Format(
+                            "REQUIRED: ConnectionString for Roundhouse Db"),
+                        option => configuration.ConnectionStringRoundhouse = option)
                 .Add("f=|files=|sqlfilesdirectory=",
                      string.Format("SqlFilesDirectory - The directory where your SQL scripts are. Defaults to \"{0}\".",
                                    ApplicationParameters.default_files_directory),
@@ -259,6 +263,10 @@ namespace roundhouse.console
                 .Add("cds=|createdatabasescript=|createdatabasecustomscript=",
                      "CreateDatabaseCustomScript - This instructs RH to use this script for creating a database instead of the default based on the SQLType.",
                      option => configuration.CreateDatabaseCustomScript = option)
+                 //custom create database
+                 .Add("crds=|createroundhousedatabasescript=|createroundhousedatabasecustomscript=",
+                     "CreateRoundhouseDatabaseCustomScript - This instructs RH to use this script for creating a database instead of the default based on the SQLType.",
+                      option => configuration.CreateRoundhouseDatabaseCustomScript = option)
                 //drop
                 .Add("drop",
                      "Drop - This instructs RH to remove a database and not run migration scripts. Defaults to false.",

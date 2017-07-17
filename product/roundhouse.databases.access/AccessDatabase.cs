@@ -64,6 +64,7 @@ namespace roundhouse.databases.access
                 connection_string = build_connection_string(server_name, database_name, connect_options);
             }
             configuration_property_holder.ConnectionString = connection_string;
+            configuration_property_holder.ConnectionStringRoundhouse = roundhouse_connection_string;
 
             set_provider();
             admin_connection_string = connection_string;
@@ -107,11 +108,10 @@ namespace roundhouse.databases.access
             //TODO: Anything for Access?
         }
 
-        public override string create_database_script()
+        public override string create_database_script(string db_name)
         {
             return string.Empty;
         }
-
         public override string set_recovery_mode_script(bool simple)
         {
             return string.Empty;
@@ -122,7 +122,7 @@ namespace roundhouse.databases.access
             return string.Empty;
         }
 
-        public override string delete_database_script()
+        public override string delete_database_script(string db_name)
         {
             return string.Empty;
         }

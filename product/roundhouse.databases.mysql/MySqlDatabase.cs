@@ -63,6 +63,7 @@ namespace roundhouse.databases.mysql
             }
 
             configuration_property_holder.ConnectionString = connection_string;
+            configuration_property_holder.ConnectionStringRoundhouse = roundhouse_connection_string;
 
             set_provider();
             if (string.IsNullOrEmpty(admin_connection_string))
@@ -86,18 +87,18 @@ namespace roundhouse.databases.mysql
             return string.Format("Server={0};Database={1};Port=3306;Uid={2};Pwd={3};", server_name, database_name, user_name, password);
         }
 
-        public override string create_database_script()
+        public override string create_database_script(string db_name)
         {
             return string.Format(
                 @"CREATE DATABASE IF NOT EXISTS `{0}`;",
-                database_name);
+                db_name);
         }
 
-        public override string delete_database_script()
+        public override string delete_database_script(string db_name)
         {
             return string.Format(
                 @"DROP DATABASE IF EXISTS `{0}`;",
-                database_name);
+                db_name);
         }
 
         public override void run_database_specific_tasks()

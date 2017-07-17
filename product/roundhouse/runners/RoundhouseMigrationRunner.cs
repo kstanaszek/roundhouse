@@ -99,19 +99,21 @@ namespace roundhouse.runners
                 remove_share_from_change_drop_folder();
 
                 bool database_was_created = false;
+                bool roundhouse_database_was_created = false;
 
                 if (!dropping_the_database)
                 {
                     if (!dont_create_the_database)
                     {
-                        database_was_created = database_migrator.create_or_restore_database(get_custom_create_database_script());
+                        database_was_created = database_migrator.create_or_restore_database(get_custom_create_database_script(), configuration.DatabaseName, configuration.ServerName);
+                        roundhouse_database_was_created = database_migrator.create_or_restore_database(get_roundhouse_custom_create_database_script(), configuration.RoundhouseDatabaseName, configuration.RoundhouseServerName);
                     }
                     
                     if (configuration.RecoveryMode != RecoveryMode.NoChange)
                     {
                         database_migrator.set_recovery_mode(configuration.RecoveryMode == RecoveryMode.Simple);
                     }
-                    
+
                     database_migrator.open_connection(run_in_a_transaction);
                     Log.bound_to(this).log_an_info_event_containing("{0}", "=".PadRight(50, '='));
                     Log.bound_to(this).log_an_info_event_containing("RoundhousE Structure");
@@ -131,12 +133,14 @@ namespace roundhouse.runners
                     Log.bound_to(this).log_an_info_event_containing("{0}", "=".PadRight(50, '='));
 
                     run_out_side_of_transaction_folder(known_folders.before_migration, version_id, new_version);
-                    
+
                     database_migrator.open_admin_connection();
                     log_and_traverse(known_folders.alter_database, version_id, new_version, ConnectionType.Admin);
                     database_migrator.close_admin_connection();
 
-                    if (database_was_created)
+
+
+                    if (database_was_created && roundhouse_database_was_created)
                     {
                         log_and_traverse(known_folders.run_after_create_database, version_id, new_version, ConnectionType.Default);
                     }
@@ -178,7 +182,8 @@ namespace roundhouse.runners
                 else
                 {
                     database_migrator.open_admin_connection();
-                    database_migrator.delete_database();
+                    database_migrator.delete_database(configuration.DatabaseName, configuration.ServerName);
+                    database_migrator.delete_database(configuration.RoundhouseDatabaseName, configuration.RoundhouseServerName);
                     database_migrator.close_admin_connection();
                     database_migrator.close_connection();
                     Log.bound_to(this).log_an_info_event_containing("{0}{0}{1} has removed database ({2}). All changes and backups can be found at \"{3}\".",
@@ -254,6 +259,22 @@ namespace roundhouse.runners
             }
 
             return configuration.CreateDatabaseCustomScript;
+        }
+
+
+        private string get_roundhouse_custom_create_database_script()
+        {
+            if (string.IsNullOrEmpty(configuration.CreateRoundhouseDatabaseCustomScript))
+            {
+                return configuration.CreateRoundhouseDatabaseCustomScript;
+            }
+
+            if (file_system.file_exists(configuration.CreateRoundhouseDatabaseCustomScript))
+            {
+                return file_system.read_file_text(configuration.CreateRoundhouseDatabaseCustomScript);
+            }
+
+            return configuration.CreateRoundhouseDatabaseCustomScript;
         }
 
         private void create_change_drop_folder()

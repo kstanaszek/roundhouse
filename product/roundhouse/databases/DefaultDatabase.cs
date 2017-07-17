@@ -24,9 +24,12 @@ namespace roundhouse.databases
     {
         public ConfigurationPropertyHolder configuration { get; set; }
         public string server_name { get; set; }
+        public string roundhouse_server_name { get; set; }
         public string database_name { get; set; }
+        public string roundhouse_database_name { get; set; }
         public string provider { get; set; }
         public string connection_string { get; set; }
+        public string roundhouse_connection_string { get; set; }
         public string admin_connection_string { get; set; }
         public string roundhouse_schema_name { get; set; }
         public string version_table_name { get; set; }
@@ -59,7 +62,7 @@ namespace roundhouse.databases
 
         protected IConnection<DBCONNECTION> server_connection;
         protected IConnection<DBCONNECTION> admin_connection;
-
+        protected IConnection<DBCONNECTION> roundhouse_connection;
         private bool disposing;
         private Dictionary<string, ScriptsRun> scripts_cache;
 
@@ -77,22 +80,25 @@ namespace roundhouse.databases
 
         public abstract void open_connection(bool with_transaction);
         public abstract void close_connection();
+        public abstract void open_roundhouse_connection();
+        public abstract void close_roundhouse_connection();
+
         public abstract void open_admin_connection();
         public abstract void close_admin_connection();
 
         public abstract void rollback();
 
-        public abstract string create_database_script();
+        public abstract string create_database_script(string db_name);
         public abstract string set_recovery_mode_script(bool simple);
         public abstract string restore_database_script(string restore_from_path, string custom_restore_options);
-        public abstract string delete_database_script();
+        public abstract string delete_database_script(string db_name);
 
-        public virtual bool create_database_if_it_doesnt_exist(string custom_create_database_script)
+        public virtual bool create_database_if_it_doesnt_exist(string custom_create_database_script, string db_name)
         {
             bool database_was_created = false;
             try
             {
-                string create_script = create_database_script();
+                string create_script = create_database_script(db_name);
                 if (!string.IsNullOrEmpty(custom_create_database_script))
                 {
                     create_script = custom_create_database_script;
@@ -182,11 +188,11 @@ namespace roundhouse.databases
             }
         }
 
-        public virtual void delete_database_if_it_exists()
+        public virtual void delete_database_if_it_exists(string db_name)
         {
             try
             {
-                run_sql(delete_database_script(), ConnectionType.Admin);
+                run_sql(delete_database_script(db_name), ConnectionType.Admin);
             }
             catch (Exception ex)
             {
@@ -400,6 +406,9 @@ namespace roundhouse.databases
                 dispose_connection(server_connection);
                 Log.bound_to(this).log_a_debug_event_containing("Database is disposing admin connection.");
                 dispose_connection(admin_connection);
+                Log.bound_to(this).log_a_debug_event_containing("Database is disposing connection to RoundhousE db.");
+                dispose_connection(roundhouse_connection);
+
 
                 disposing = true;
             }

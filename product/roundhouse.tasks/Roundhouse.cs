@@ -49,11 +49,17 @@
 
         public string ServerName { get; set; }
 
+        public string RoundhouseServerName { get; set; }
+
         public string DatabaseName { get; set; }
+
+        public string RoundhouseDatabaseName { get; set; }
 
         public string ConnectionString { get; set; }
 
         public string ConnectionStringAdmin { get; set; }
+
+        public string ConnectionStringRoundhouse { get; set; }
 
         public int CommandTimeout { get; set; }
 
@@ -116,6 +122,8 @@
         public int RestoreTimeout { get; set; }
 
         public string CreateDatabaseCustomScript { get; set; }
+
+        public string CreateRoundhouseDatabaseCustomScript { get; set; }
 
         public bool Drop { get; set; }
 

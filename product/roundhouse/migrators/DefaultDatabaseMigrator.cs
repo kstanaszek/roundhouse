@@ -59,6 +59,16 @@ namespace roundhouse.migrators
             database.close_admin_connection();
         }
 
+        public void open_roundhouse_connection()
+        {
+            database.open_roundhouse_connection();
+        }
+
+        public void close_roundhouse_connection()
+        {
+            database.close_roundhouse_connection();
+        }
+
         public void open_connection(bool with_transaction)
         {
             running_in_a_transaction = with_transaction;
@@ -70,20 +80,20 @@ namespace roundhouse.migrators
             database.close_connection();
         }
 
-        public bool create_or_restore_database(string custom_create_database_script)
+        public bool create_or_restore_database(string custom_create_database_script, string db_name, string server_name)
         {
             var database_created = false;
 
             if (string.IsNullOrEmpty(custom_create_database_script))
             {
-                Log.bound_to(this).log_an_info_event_containing("Creating {0} database on {1} server if it doesn't exist.", database.database_name, database.server_name);
+                Log.bound_to(this).log_an_info_event_containing("Creating {0} database on {1} server if it doesn't exist.", db_name, server_name);
             }
             else
             {
-                Log.bound_to(this).log_an_info_event_containing("Creating {0} database on {1} server with custom script.", database.database_name, database.server_name);
+                Log.bound_to(this).log_an_info_event_containing("Creating {0} database on {1} server with custom script.", db_name, server_name);
             }
 
-            database_created = database.create_database_if_it_doesnt_exist(custom_create_database_script);
+            database_created = database.create_database_if_it_doesnt_exist(custom_create_database_script, db_name);
 
             if (restoring_database)
             {
@@ -153,10 +163,10 @@ namespace roundhouse.migrators
             return current_version;
         }
 
-        public void delete_database()
+        public void delete_database(string db_name, string server_name)
         {
-            Log.bound_to(this).log_an_info_event_containing("Deleting {0} database on {1} server if it exists.", database.database_name, database.server_name);
-            database.delete_database_if_it_exists();
+            Log.bound_to(this).log_an_info_event_containing("Deleting {0} database on {1} server if it exists.", db_name, server_name);
+            database.delete_database_if_it_exists(db_name);
         }
 
         public long version_the_database(string repository_path, string repository_version)

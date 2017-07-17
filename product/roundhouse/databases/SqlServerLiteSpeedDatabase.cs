@@ -31,16 +31,45 @@ namespace roundhouse.databases
             set { database.admin_connection_string = value; }
         }
 
+
+        public string roundhouse_connection_string
+        {
+            get { return database.roundhouse_connection_string; }
+            set { database.roundhouse_connection_string = value; }
+        }
+
+        public void open_roundhouse_connection()
+        {
+            database.open_roundhouse_connection();
+        }
+
+        public void close_roundhouse_connection()
+        {
+            database.close_roundhouse_connection();
+        }
+
         public string server_name
         {
             get { return database.server_name; }
             set { database.server_name = value; }
         }
 
+        public string roundhouse_server_name
+        {
+            get { return database.roundhouse_server_name; }
+            set { database.roundhouse_server_name = value; }
+        }
+
         public string database_name
         {
             get { return database.database_name; }
             set { database.database_name = value; }
+        }
+
+        public string roundhouse_database_name
+        {
+            get { return database.roundhouse_database_name; }
+            set { database.roundhouse_database_name = value; }
         }
 
         public string provider
@@ -148,9 +177,9 @@ namespace roundhouse.databases
             database.rollback();
         }
 
-        public bool create_database_if_it_doesnt_exist(string custom_create_database_script)
+        public bool create_database_if_it_doesnt_exist(string custom_create_database_script, string db_name)
         {
-            return database.create_database_if_it_doesnt_exist(custom_create_database_script);
+            return database.create_database_if_it_doesnt_exist(custom_create_database_script, db_name);
         }
 
         public void set_recovery_mode(bool simple)
@@ -191,9 +220,9 @@ namespace roundhouse.databases
             command_timeout = current_timeout;
         }
 
-        public void delete_database_if_it_exists()
+        public void delete_database_if_it_exists(string db_name)
         {
-            database.delete_database_if_it_exists();
+            database.delete_database_if_it_exists(db_name);
         }
 
         public void run_database_specific_tasks()

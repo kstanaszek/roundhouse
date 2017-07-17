@@ -91,9 +91,9 @@ namespace roundhouse.databases.postgresql
             return string.Format("Server={0};Database={1};Port=5432;UserId={2};Password={3};", server_name, database_name, user_name, password);
         }
 
-        public override string create_database_script()
+        public override string create_database_script(string db_name)
         {
-            return string.Format("CREATE DATABASE {0};", database_name);
+            return string.Format("CREATE DATABASE {0};", db_name);
 
             //            return string.Format(
             //                @"
@@ -128,10 +128,10 @@ namespace roundhouse.databases.postgresql
             throw new NotImplementedException();
         }
 
-        public override string delete_database_script()
+        public override string delete_database_script(string db_name)
         {
             //compatible starting at 8.2
-            return string.Format(@"DROP DATABASE IF EXISTS {0};", database_name);
+            return string.Format(@"DROP DATABASE IF EXISTS {0};", db_name);
         }
 
         public override void create_or_update_roundhouse_tables()

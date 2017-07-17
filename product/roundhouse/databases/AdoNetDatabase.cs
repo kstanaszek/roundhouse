@@ -60,6 +60,26 @@ namespace roundhouse.databases
 
         }
 
+        public override void open_roundhouse_connection()
+        {
+            Log.bound_to(this).log_a_debug_event_containing("Opening connection to RoundhousE db'{0}'", admin_connection_string);
+            roundhouse_connection = GetAdoNetConnection(roundhouse_connection_string);
+            roundhouse_connection.open();
+        }
+
+        public override void close_roundhouse_connection()
+        {
+            Log.bound_to(this).log_a_debug_event_containing("Closing connection to RoundhousE db");
+            if (roundhouse_connection_string != null)
+            {
+                roundhouse_connection.clear_pool();
+                roundhouse_connection.close();
+                roundhouse_connection.Dispose();
+                roundhouse_connection = null;
+            }
+
+        }
+
         public override void open_connection(bool with_transaction)
         {
             Log.bound_to(this).log_a_debug_event_containing("Opening connection to '{0}'", connection_string);
@@ -194,6 +214,15 @@ namespace roundhouse.databases
                     }
                     Log.bound_to(this).log_a_debug_event_containing("Setting up command for normal connection");
                     command = server_connection.underlying_type().CreateCommand();
+                    command.CommandTimeout = command_timeout;
+                    break;
+                case ConnectionType.Roundhouse:
+                    if (roundhouse_connection == null || roundhouse_connection.underlying_type().State != ConnectionState.Open)
+                    {
+                        open_roundhouse_connection();
+                    }
+                    Log.bound_to(this).log_a_debug_event_containing("Setting up command for normal connection");
+                    command = roundhouse_connection.underlying_type().CreateCommand();
                     command.CommandTimeout = command_timeout;
                     break;
                 case ConnectionType.Admin:

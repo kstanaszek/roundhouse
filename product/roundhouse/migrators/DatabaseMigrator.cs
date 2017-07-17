@@ -14,10 +14,10 @@ namespace roundhouse.migrators
         void open_connection(bool with_transaction);
         void close_connection();
         void backup_database_if_it_exists();
-        bool create_or_restore_database(string custom_create_database_script);
+        bool create_or_restore_database(string custom_create_database_script, string db_name, string server_name);
         void set_recovery_mode(bool simple);
         //void restore_database(string restore_from_path);
-        void delete_database();
+        void delete_database(string db_name, string server_name);
         void run_roundhouse_support_tasks();
         string get_current_version(string repository_path);
         long version_the_database(string repository_path, string repository_version);

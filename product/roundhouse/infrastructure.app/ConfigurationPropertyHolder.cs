@@ -9,8 +9,11 @@ namespace roundhouse.infrastructure.app
     {
         Logger Logger { get; set; }
         string ServerName { get; set; }
+        string RoundhouseServerName { get; set; }
         string DatabaseName { get; set; }
+        string RoundhouseDatabaseName { get; set; }
         string ConnectionString { get; set; }
+        string ConnectionStringRoundhouse { get; set; }
         string ConnectionStringAdmin { get; set; }
         int CommandTimeout { get; set; }
         int CommandTimeoutAdmin { get; set; }
@@ -43,6 +46,7 @@ namespace roundhouse.infrastructure.app
         string RestoreCustomOptions { get; set; }
         int RestoreTimeout { get; set; }
         string CreateDatabaseCustomScript { get; set; }
+        string CreateRoundhouseDatabaseCustomScript { get; set; }
         string OutputPath { get; set; }
         bool WarnOnOneTimeScriptChanges { get; set; }
         bool WarnAndIgnoreOnOneTimeScriptChanges { get; set; }

@@ -19,6 +19,10 @@ namespace roundhouse.infrastructure.app
                 case "sql":
                 case "sql.net":
                 case "sqlserver":
+                case "roundhouse_sqlado.net":
+                    database_type_full_name =
+                        "roundhouse.databases.sqlserver.SqlServerDatabase, roundhouse.databases.sqlserver.roundhousedb";
+                    break;
                 case "sqlado.net":
                     database_type_full_name =
                         "roundhouse.databases.sqlserver.SqlServerDatabase, roundhouse.databases.sqlserver";

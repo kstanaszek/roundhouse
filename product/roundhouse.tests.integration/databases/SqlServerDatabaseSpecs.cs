@@ -76,6 +76,7 @@
                                     db.server_name = configuration_property_holder.ServerName ?? string.Empty;
                                     db.database_name = configuration_property_holder.DatabaseName ?? string.Empty;
                                     db.connection_string = configuration_property_holder.ConnectionString;
+                                    db.roundhouse_connection_string = configuration_property_holder.ConnectionStringRoundhouse;
                                     db.admin_connection_string = configuration_property_holder.ConnectionStringAdmin;
                                     db.roundhouse_schema_name = configuration_property_holder.SchemaName;
                                     db.version_table_name = configuration_property_holder.VersionTableName;

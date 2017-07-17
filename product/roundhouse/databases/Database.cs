@@ -69,10 +69,13 @@ namespace roundhouse.databases
     {
         ConfigurationPropertyHolder configuration { get; set; }
         string server_name { get; set; }
+        string roundhouse_server_name { get; set; }
         string database_name { get; set; }
+        string roundhouse_database_name { get; set; }
         string provider { get; set; }
         string connection_string { get; set; }
         string admin_connection_string { get; set; }
+        string roundhouse_connection_string { get; set; }
         string roundhouse_schema_name { get; set; }
         string version_table_name { get; set; }
         string scripts_run_table_name { get; set; }
@@ -88,15 +91,18 @@ namespace roundhouse.databases
         void initialize_connections(ConfigurationPropertyHolder configuration_property_holder);
         void open_connection(bool with_transaction);
         void close_connection();
+        void open_roundhouse_connection();
+        void close_roundhouse_connection();
+
         void open_admin_connection();
         void close_admin_connection();
         void rollback();
 
-        bool create_database_if_it_doesnt_exist(string custom_create_database_script);
+        bool create_database_if_it_doesnt_exist(string custom_create_database_script, string db_name);
         void set_recovery_mode(bool simple);
         void backup_database(string output_path_minus_database);
         void restore_database(string restore_from_path, string custom_restore_options);
-        void delete_database_if_it_exists();
+        void delete_database_if_it_exists(string db_name);
         void run_database_specific_tasks();
         void create_or_update_roundhouse_tables();
         void run_sql(string sql_to_run,ConnectionType connection_type);

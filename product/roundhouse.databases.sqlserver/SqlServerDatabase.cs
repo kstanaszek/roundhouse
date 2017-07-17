@@ -33,6 +33,16 @@ namespace roundhouse.databases.sqlserver
                 var connection_string_builder = new SqlConnectionStringBuilder(connection_string);
                 server_name = connection_string_builder.DataSource;
                 database_name = connection_string_builder.InitialCatalog;
+                roundhouse_server_name = connection_string_builder.DataSource;
+                roundhouse_database_name = connection_string_builder.InitialCatalog;
+            }
+
+
+            if (!string.IsNullOrEmpty(roundhouse_connection_string))
+            {
+                var connection_string_builder = new SqlConnectionStringBuilder(roundhouse_connection_string);
+                roundhouse_server_name = connection_string_builder.DataSource;
+                roundhouse_database_name = connection_string_builder.InitialCatalog;
             }
 
             if (string.IsNullOrEmpty(connection_string))
@@ -40,6 +50,7 @@ namespace roundhouse.databases.sqlserver
                 connection_string = build_connection_string(server_name, database_name, connect_options);
             }
             configuration_property_holder.ConnectionString = connection_string;
+            configuration_property_holder.ConnectionStringRoundhouse = roundhouse_connection_string;
 
             set_provider();
             if (string.IsNullOrEmpty(admin_connection_string))
@@ -48,6 +59,15 @@ namespace roundhouse.databases.sqlserver
                 admin_connection_string = Regex.Replace(admin_connection_string, "database=.*?;", "database=master;", RegexOptions.IgnoreCase);
             }
             configuration_property_holder.ConnectionStringAdmin = admin_connection_string;
+
+            if (string.IsNullOrEmpty(roundhouse_connection_string))
+            {
+                roundhouse_connection_string = Regex.Replace(connection_string, "initial catalog=.*?;", "initial catalog=master;", RegexOptions.IgnoreCase);
+                roundhouse_connection_string = Regex.Replace(roundhouse_connection_string, "database=.*?;", "database=master;", RegexOptions.IgnoreCase);
+            }
+            configuration_property_holder.ConnectionStringAdmin = admin_connection_string;
+
+            configuration_property_holder.ConnectionStringAdmin = roundhouse_connection_string;
         }
 
         public override void set_provider()
@@ -78,7 +98,7 @@ namespace roundhouse.databases.sqlserver
         {
             try
             {
-                run_sql(create_roundhouse_schema_script(),ConnectionType.Default);
+                run_sql(create_roundhouse_schema_script(),ConnectionType.Roundhouse);
             }
             catch (Exception ex)
             {
@@ -101,7 +121,7 @@ namespace roundhouse.databases.sqlserver
                 , roundhouse_schema_name);
         }
 
-        public override string create_database_script()
+        public override string create_database_script(string db_name)
         {
             return string.Format(
                 @"      DECLARE @Created bit
@@ -114,7 +134,7 @@ namespace roundhouse.databases.sqlserver
 
                         SELECT @Created 
                         ",
-                database_name);
+                db_name);
 
             //                            ALTER DATABASE [{0}] MODIFY FILE ( NAME = N'{0}', FILEGROWTH = 10240KB )
         }
@@ -174,7 +194,7 @@ namespace roundhouse.databases.sqlserver
             return restore_options.ToString();
         }
 
-        public override string delete_database_script()
+        public override string delete_database_script(string db_name)
         {
             return string.Format(
                 @"USE master
@@ -193,7 +213,7 @@ namespace roundhouse.databases.sqlserver
 
                             DROP DATABASE [{0}] 
                         END",
-                database_name);
+                db_name);
         }
 
         /// <summary>

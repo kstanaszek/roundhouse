@@ -223,7 +223,7 @@ namespace roundhouse.databases.oracle
                 roundhouse_schema_name, version_table_name);
         }
 
-        public override string create_database_script()
+        public override string create_database_script(string db_name)
         {
             return string.Format(
            @"
@@ -237,7 +237,7 @@ namespace roundhouse.databases.oracle
                         EXECUTE IMMEDIATE 'GRANT RESOURCE TO {0}';                            
                     END IF;
                 END;                        
-                ", database_name.to_upper());
+                ", db_name.to_upper());
         }
 
         public override string set_recovery_mode_script(bool simple)
@@ -250,7 +250,7 @@ namespace roundhouse.databases.oracle
             return string.Empty;
         }
 
-        public override string delete_database_script()
+        public override string delete_database_script(string db_name)
         {
             return string.Format(
             @" 
@@ -262,7 +262,7 @@ namespace roundhouse.databases.oracle
                         EXECUTE IMMEDIATE 'DROP USER {0} CASCADE';
                     END IF;
                 END;",
-            database_name.to_upper());
+            db_name.to_upper());
         }
     }
 }
